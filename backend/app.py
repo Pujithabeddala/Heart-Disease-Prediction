@@ -160,8 +160,9 @@ app = Flask(
 
 # ---------- Model Directory ----------
 BASE_DIR = os.path.dirname(__file__)
-MODEL_DIR = os.path.join(BASE_DIR, "model")
+MODEL_DIR = "/tmp/model"
 os.makedirs(MODEL_DIR, exist_ok=True)
+ 
 
 # ---------- History DB (SQLite) ----------
 HISTORY_DB_PATH = os.path.join(BASE_DIR, "prediction_history.sqlite3")
@@ -212,6 +213,7 @@ def init_db():
         )
 
 init_db()
+
 
 # ---------- Model File IDs ----------
 files = {
