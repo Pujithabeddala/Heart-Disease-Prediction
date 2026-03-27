@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% set title = "HeartCare AI | About" %}
+{% set active = "about" %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2>About Project</h2>
+    </div>
+    <div class="card">
+      <div class="about-grid" style="display:flex; flex-direction:column; gap:18px">
+        <div>
+          <h3>Dataset</h3>
+          <p class="muted">
+            Based on the UCI Heart Disease schema: each row is one patient with routine clinical features
+            (age, chest pain, blood pressure, cholesterol, ECG, etc.).
+          </p>
+          <p class="muted" style="margin-top:10px">
+            The target is a binary label (heart disease: yes / no), and the data is preprocessed as a tabular
+            classification problem.
+          </p>
+        </div>
+
+        <div>
+          <h3>Project models – RBM, FNN, LSTM</h3>
+          <p class="muted">
+            <strong>RBM</strong> (Restricted Boltzmann Machine) is used to learn hidden features from the input data
+            in an unsupervised way, which can then support better heart-disease prediction.
+          </p>
+          <p class="muted" style="margin-top:10px">
+            <strong>FNN</strong> (Feedforward Neural Network) maps patient features through hidden layers to predict risk
+            from the tabular heart-disease dataset.
+          </p>
+          <p class="muted" style="margin-top:10px">
+            <strong>LSTM</strong> (Long Short-Term Memory) can model time-based patterns when sequential or time-series
+            medical data is available for each patient.
+          </p>
+        </div>
+
+        <div>
+          <h3>Real-world use</h3>
+          <p class="muted">
+            The system is intended as a <strong>decision-support tool</strong> that quickly summarizes heart-disease risk
+            from routine clinical inputs to guide further medical evaluation.
+          </p>
+          <p class="muted" style="margin-top:10px">
+            In practice, such models can support screening dashboards in clinics, telemedicine triage, and patient
+            education, always alongside clinician judgment.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

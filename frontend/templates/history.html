@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% set title = "HeartCare AI | History" %}
+{% set active = "history" %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2>Prediction History</h2>
+      
+    </div>
+
+    <div class="card">
+      {% if rows and rows|length > 0 %}
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Probability</th>
+                <th>Risk</th>
+                <th class="th-actions">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rows %}
+                <tr>
+                  <td>{{ r["patient_name"] }}</td>
+                  <td>
+                    {% if r["model_name"] == "adaboost" %}RBM{% endif %}
+                    {% if r["model_name"] == "catboost" %}FNN{% endif %}
+                    {% if r["model_name"] == "xgboost" %}LSTM{% endif %}
+                    {% if r["model_name"] not in ["adaboost","catboost","xgboost"] %}{{ r["model_name"] }}{% endif %}
+                  </td>
+                  <td>
+                    {% if r["pred_class"] == 1 %}
+                      <span class="badge danger">Detected</span>
+                    {% else %}
+                      <span class="badge success">Not Detected</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ "%.2f"|format(r["confidence"]) }}%</td>
+                  <td>{{ r["risk"] }}</td>
+                  <td class="td-actions">
+                    <form action="{{ url_for('delete_history', prediction_id=r['id']) }}" method="post"
+                          onsubmit="return confirm('Delete this record for ' + ({{ r['patient_name']|tojson }} || 'this patient') + '?');">
+                      <button class="icon-btn danger" type="submit" aria-label="Delete record" title="Delete">
+                        🗑️
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="muted">No predictions yet. Go to the Predict page and submit a prediction.</p>
+        <div style="margin-top:12px;">
+          <a class="btn primary" href="{{ url_for('predict') }}">Go to Predict</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+

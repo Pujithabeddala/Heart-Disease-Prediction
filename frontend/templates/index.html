@@ -1,85 +1,431 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Heart Disease Prediction</title>
+<title>HeartCare AI</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="wrapper">
-<div class="container">
+<header class="navbar" id="top">
+  <a class="brand" href="#home" aria-label="HeartCare AI home">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-text">HeartCare <span class="brand-accent">AI</span></span>
+  </a>
 
-<h2>Heart Disease Prediction</h2>
+  <nav class="navlinks" aria-label="Primary">
+    <a href="#home">Home</a>
+    <a href="#predict">Predict</a>
+    <a href="#about">About</a>
+    <a href="#models">Model Info</a>
+    <a href="#contact">Contact</a>
+  </nav>
 
-<form action="/predict" method="post">
-<input type="number" name="age" placeholder="Age" required>
-<input type="number" name="sex" placeholder="Sex" required>
-<input type="number" name="cp" placeholder="Chest Pain Type" required>
-<input type="number" name="trtbps" placeholder="Rest BP" required>
-<input type="number" name="chol" placeholder="Cholesterol" required>
-<input type="number" name="fbs" placeholder="FBS" required>
-<input type="number" name="restecg" placeholder="Rest ECG" required>
-<input type="number" name="thalachh" placeholder="Max Heart Rate" required>
-<input type="number" name="exng" placeholder="Exercise Angina" required>
-<input type="number" step="0.1" name="oldpeak" placeholder="Oldpeak" required>
-<input type="number" name="slp" placeholder="Slope" required>
-<input type="number" name="caa" placeholder="Major Vessels" required>
-<input type="number" name="thall" placeholder="Thalassemia" required>
+  <a class="nav-user" href="#contact" title="User (optional login)">
+    <span aria-hidden="true">👤</span>
+  </a>
+</header>
 
-<select name="model">
-<option value="adaboost">AdaBoost</option>
-<option value="catboost">CatBoost</option>
-<option value="xgboost">XGBoost</option>
-</select>
+<main>
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="kicker">AI-powered screening assistant</p>
+        <h1>AI-Powered Heart Disease Prediction</h1>
+        <p class="sub">
+          Predict your heart health in seconds using proven ML models and clear, visual results.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#predict">Start Prediction</a>
+          <a class="btn ghost" href="#about">Learn more</a>
+        </div>
+        <div class="hero-badges">
+          <span class="pill">AdaBoost</span>
+          <span class="pill">CatBoost</span>
+          <span class="pill">XGBoost</span>
+        </div>
+      </div>
 
-<button type="submit">Predict</button>
-</form>
+      <div class="hero-card" aria-label="Preview">
+        <div class="mini-metric">
+          <div class="mini-title">Risk</div>
+          <div class="mini-value">72%</div>
+          <div class="mini-sub">Confidence meter</div>
+        </div>
+        <div class="meter">
+          <div class="meter-bar" style="width:72%"></div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-chip">Fast</div>
+          <div class="mini-chip">Visual results</div>
+          <div class="mini-chip">Mobile friendly</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section class="section" id="predict">
+    <div class="section-head">
+      <h2>Predict</h2>
+      <p>Enter patient details and choose a model to estimate heart disease risk.</p>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div class="card-head">
+          <h3>Patient Details</h3>
+          <p class="muted">Fields are based on the UCI heart disease dataset schema.</p>
+        </div>
+
+        <form id="predictForm" action="/predict" method="post" novalidate>
+          <div class="form-grid">
+            <div class="form-section">
+              <div class="section-title">Personal Info</div>
+
+              <label class="field">
+                <span class="label">Age</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🎂</span>
+                  <input type="number" name="age" placeholder="e.g., 45" min="1" max="120" required>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Sex</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">⚥</span>
+                  <select name="sex" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="1">Male</option>
+                    <option value="0">Female</option>
+                  </select>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Chest Pain Type (CP)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🫀</span>
+                  <select name="cp" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="0">Typical angina (0)</option>
+                    <option value="1">Atypical angina (1)</option>
+                    <option value="2">Non-anginal pain (2)</option>
+                    <option value="3">Asymptomatic (3)</option>
+                  </select>
+                </span>
+              </label>
+            </div>
+
+            <div class="form-section">
+              <div class="section-title">Medical Info</div>
+
+              <label class="field">
+                <span class="label">Resting BP (trtbps)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🩺</span>
+                  <input type="number" name="trtbps" placeholder="e.g., 120" min="50" max="250" required>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Cholesterol (chol)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🧪</span>
+                  <input type="number" name="chol" placeholder="e.g., 220" min="50" max="700" required>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Fasting Blood Sugar (fbs)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🍬</span>
+                  <select name="fbs" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="1">True (> 120 mg/dl) (1)</option>
+                    <option value="0">False (0)</option>
+                  </select>
+                </span>
+              </label>
+            </div>
+
+            <div class="form-section">
+              <div class="section-title">ECG & Exercise</div>
+
+              <label class="field">
+                <span class="label">Rest ECG (restecg)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">📉</span>
+                  <select name="restecg" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="0">Normal (0)</option>
+                    <option value="1">ST-T wave abnormality (1)</option>
+                    <option value="2">Left ventricular hypertrophy (2)</option>
+                  </select>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Max Heart Rate (thalachh)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🏃</span>
+                  <input type="number" name="thalachh" placeholder="e.g., 160" min="50" max="250" required>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Exercise Angina (exng)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">⚡</span>
+                  <select name="exng" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="1">Yes (1)</option>
+                    <option value="0">No (0)</option>
+                  </select>
+                </span>
+              </label>
+            </div>
+
+            <div class="form-section">
+              <div class="section-title">Advanced</div>
+
+              <label class="field">
+                <span class="label">Oldpeak</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">📌</span>
+                  <input type="number" step="0.1" name="oldpeak" placeholder="e.g., 1.4" min="0" max="10" required>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Slope (slp)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">⛰️</span>
+                  <select name="slp" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="0">Downsloping (0)</option>
+                    <option value="1">Flat (1)</option>
+                    <option value="2">Upsloping (2)</option>
+                  </select>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Major Vessels (caa)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🧬</span>
+                  <select name="caa" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </span>
+              </label>
+
+              <label class="field">
+                <span class="label">Thalassemia (thall)</span>
+                <span class="control">
+                  <span class="icon" aria-hidden="true">🧫</span>
+                  <select name="thall" required>
+                    <option value="" selected disabled>Select</option>
+                    <option value="0">Unknown (0)</option>
+                    <option value="1">Normal (1)</option>
+                    <option value="2">Fixed defect (2)</option>
+                    <option value="3">Reversible defect (3)</option>
+                  </select>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <label class="field">
+              <span class="label">Model</span>
+              <span class="control">
+                <span class="icon" aria-hidden="true">🧠</span>
+                <select name="model" id="modelSelect" required>
+                  <option value="adaboost">AdaBoost</option>
+                  <option value="catboost">CatBoost</option>
+                  <option value="xgboost">XGBoost</option>
+                </select>
+              </span>
+            </label>
+
+            <button class="btn primary full" type="submit">Predict</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="side">
+        <div class="card soft">
+          <h3>Model Selection Info</h3>
+          <p class="muted">Pick a model—see what it’s best at.</p>
+          <div id="modelInfo" class="model-info" aria-live="polite"></div>
+        </div>
+
+        <div class="card soft">
+          <h3>Charts</h3>
+          <p class="muted">Model comparison and feature importance (demo visuals).</p>
+          <div class="charts">
+            <canvas id="modelChart" height="180"></canvas>
+            <canvas id="fiChart" height="220"></canvas>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    {% if prediction_text %}
+    <div class="results" id="results">
+      <div class="card result-card">
+        <div class="result-top">
+          <div>
+            <h3>Prediction Result</h3>
+            <p class="muted">Based on the selected model and your inputs.</p>
+          </div>
+
+          {% if pred_class == 1 %}
+            <span class="badge danger">High Risk</span>
+          {% else %}
+            <span class="badge success">Low Risk</span>
+          {% endif %}
+        </div>
+
+        <div class="result-grid">
+          <div class="result-visual">
+            {% if pred_class == 1 %}
+              <div class="heart">
+                  <div class="half left"></div>
+                  <div class="half right"></div>
+              </div>
+              <div class="status danger">⚠️ Heart Disease Detected</div>
+            {% else %}
+              <div class="heart full-heart pulse"></div>
+              <div class="status success">❤️ No Heart Disease Detected</div>
+            {% endif %}
+          </div>
+
+          <div class="result-metrics">
+            <div class="metric">
+              <div class="metric-title">Probability</div>
+              <div class="metric-value">{{ confidence }}%</div>
+              <div class="progress" aria-label="Confidence meter">
+                <div class="progress-bar" style="width: {{ confidence }}%"></div>
+              </div>
+              <div class="metric-sub">Confidence meter</div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-title">Risk Level</div>
+              <div class="metric-value">{{ risk }}</div>
+              <div class="metric-sub">Interpretation: Low &lt; 40%, Moderate 40–70%, High &gt;= 70%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tips">
+          <div class="tips-head">Health Tips</div>
+          <ul class="tips-list">
+            {% if risk == "High" %}
+              <li>Consult a cardiologist as soon as possible.</li>
+              <li>Avoid smoking and limit alcohol intake.</li>
+              <li>Monitor blood pressure and cholesterol regularly.</li>
+            {% elif risk == "Moderate" %}
+              <li>Adopt a heart-healthy diet (low salt, low saturated fats).</li>
+              <li>Exercise regularly (as advised by a physician).</li>
+              <li>Schedule a routine check-up and follow-up tests.</li>
+            {% else %}
+              <li>Maintain a healthy diet and stay physically active.</li>
+              <li>Keep stress under control and sleep well.</li>
+              <li>Continue regular health screenings.</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
+  <section class="section" id="about">
+    <div class="section-head">
+      <h2>About Project</h2>
+      <p>Built for demos, viva, and real-world understanding.</p>
+    </div>
+    <div class="card">
+      <div class="about-grid">
+        <div>
+          <h3>Dataset</h3>
+          <p class="muted">
+            Uses the popular UCI Heart Disease dataset schema (age, chest pain type, cholesterol, ECG, etc.).
+          </p>
+        </div>
+        <div>
+          <h3>Algorithms</h3>
+          <p class="muted">
+            Compares tree-based boosting models: AdaBoost, CatBoost, and XGBoost.
+          </p>
+        </div>
+        <div>
+          <h3>Why it matters</h3>
+          <p class="muted">
+            Early risk estimation can encourage timely checkups and better lifestyle decisions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="models">
+    <div class="section-head">
+      <h2>Model Info</h2>
+      <p>Quick comparison to help explain your choice in exams.</p>
+    </div>
+    <div class="card">
+      <div class="model-cards" id="modelCards"></div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="section-head">
+      <h2>Contact</h2>
+      <p>Want to extend this with login + prediction history? It’s a great next step.</p>
+    </div>
+    <div class="card contact-card">
+      <div class="contact-grid">
+        <div>
+          <div class="contact-title">Project</div>
+          <div class="muted">HeartCare AI — Heart Disease Prediction</div>
+        </div>
+        <div>
+          <div class="contact-title">Email</div>
+          <div class="muted">your-email@example.com</div>
+        </div>
+        <div>
+          <div class="contact-title">GitHub</div>
+          <div class="muted">Add your repo link here</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="loading" id="loading" aria-hidden="true">
+  <div class="loading-card" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="loading-text">
+      <div class="loading-title">Analyzing your data…</div>
+      <div class="muted">Please wait while the model predicts.</div>
+    </div>
+  </div>
 </div>
-</div>
 
-{% if prediction_text %}
-<div class="popup">
-<div class="popup-content">
-
-{% if pred_class == 1 %}
-<div class="heart">
-    <div class="half left"></div>
-    <div class="half right"></div>
-</div>
-
-<p style="color:red;">
-⚠️ Heart Disease Detected <br>
-Confidence: {{ confidence }}%
- <br>
-Risk Level: <b>{{ risk }}</b>
-<br>
-<br>
-Possible risk of heart disease detected. Please consult a cardiologist.
-</p>
-
-{% else %}
-<div class="heart full-heart pulse"></div>
-
-<p style="color:green;">
-❤️ No Heart Disease Detected <br>
-Confidence: {{ confidence }}%
-<br>
-
-Risk Level: <b>{{ risk }}</b>
-<br>
-<br>
-Heart condition appears normal. Maintain a healthy lifestyle.
-</p>
-{% endif %}
-
-<button onclick="this.parentElement.parentElement.style.display='none'">OK</button>
-
-</div>
-</div>
-{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </body>
 </html>

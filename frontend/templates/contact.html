@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% set title = "HeartCare AI | Contact" %}
+{% set active = "contact" %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2>Contact</h2>
+      <p>We’d love to hear from you. Reach out with any questions or feedback.</p>
+    </div>
+    <div class="card contact-page">
+      <div class="contact-wrap">
+        <div class="contact-left">
+          <h3>Get in Touch</h3>
+          <p class="muted">We'd love to hear from you! Reach out with any questions or feedback.</p>
+
+          <div class="contact-lines">
+            <div class="contact-line">
+              <span class="contact-ico" aria-hidden="true">✉️</span>
+              <div>
+                <div class="contact-label">Email</div>
+                <a class="contact-link" href="mailto:majorproject@example.com">majorproject@example.com</a>
+              </div>
+            </div>
+
+            <div class="contact-line">
+              <span class="contact-ico" aria-hidden="true">📞</span>
+              <div>
+                <div class="contact-label">Phone</div>
+                <a class="contact-link" href="tel:+919012345678">+91 9012345678</a>
+              </div>
+            </div>
+
+            <div class="contact-line">
+              <span class="contact-ico" aria-hidden="true">📍</span>
+              <div>
+                <div class="contact-label">Address</div>
+                <div class="muted">Warangal, Telangana, India</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-follow">
+            <div class="follow-title">Follow Us</div>
+            <div class="follow-icons" aria-label="Social links">
+              <a class="social-btn" href="#" aria-label="Facebook">f</a>
+              <a class="social-btn" href="#" aria-label="X">X</a>
+              <a class="social-btn" href="#" aria-label="Instagram">⌁</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-right">
+          <h3>Send Us a Message</h3>
+          {% if sent %}
+            <div class="contact-alert">
+              Thanks! Your message has been sent successfully.
+            </div>
+          {% endif %}
+          <form class="contact-form" action="{{ url_for('contact') }}" method="post">
+            <label class="contact-field">
+              <span class="contact-field-label">Name</span>
+              <input class="contact-input" type="text" name="name" placeholder="Your Name" maxlength="80">
+            </label>
+
+            <label class="contact-field">
+              <span class="contact-field-label">Email</span>
+              <input class="contact-input" type="email" name="email" placeholder="Your Email" maxlength="120">
+            </label>
+
+            <label class="contact-field">
+              <span class="contact-field-label">Message</span>
+              <textarea class="contact-input" name="message" rows="7" placeholder="Your Message" required></textarea>
+            </label>
+
+            <button class="btn primary full" type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

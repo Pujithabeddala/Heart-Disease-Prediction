@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% set title = "HeartCare AI | Home" %}
+{% set active = "home" %}
+
+{% block content %}
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="kicker">AI-powered screening assistant</p>
+        <h1>AI-Powered Heart Disease Prediction</h1>
+        <p class="sub">
+          Predict your heart health in seconds using proven ML models and clear, visual results.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="{{ url_for('predict') }}">Start Prediction</a>
+          <a class="btn ghost" href="{{ url_for('about') }}">Learn more</a>
+        </div>
+        <div class="hero-badges">
+          <span class="pill">RBM</span>
+          <span class="pill">FNN</span>
+          <span class="pill">LSTM</span>
+        </div>
+      </div>
+
+      <div class="hero-card" aria-label="Preview">
+        <div class="mini-metric">
+          <div class="mini-title">Risk</div>
+          <div class="mini-value">72%</div>
+          <div class="mini-sub">Confidence meter</div>
+        </div>
+        <div class="meter">
+          <div class="meter-bar" style="width:72%"></div>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-chip">Fast</div>
+          <div class="mini-chip">Visual results</div>
+          <div class="mini-chip">Mobile friendly</div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title or "HeartCare AI" }}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <header class="navbar" id="top">
+      <a class="brand" href="{{ url_for('home') }}" aria-label="HeartCare AI home">
+        <span class="brand-icon" aria-hidden="true">🫀</span>
+        <span class="brand-text">HeartCare <span class="brand-accent">AI</span></span>
+      </a>
+
+      <nav class="navlinks" aria-label="Primary">
+        <a href="{{ url_for('home') }}" class="{{ 'active' if active == 'home' else '' }}">Home</a>
+        <a href="{{ url_for('predict') }}" class="{{ 'active' if active == 'predict' else '' }}">Predict</a>
+        <a href="{{ url_for('about') }}" class="{{ 'active' if active == 'about' else '' }}">About</a>
+        <a href="{{ url_for('models_page') }}" class="{{ 'active' if active == 'models' else '' }}">Model Info</a>
+        <a href="{{ url_for('history') }}" class="{{ 'active' if active == 'history' else '' }}">History</a>
+        <a href="{{ url_for('contact') }}" class="{{ 'active' if active == 'contact' else '' }}">Contact</a>
+      </nav>
+
+      <a class="nav-user" href="{{ url_for('contact') }}" title="User (optional login)">
+        <span aria-hidden="true">👤</span>
+      </a>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
+

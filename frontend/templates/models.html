@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% set title = "HeartCare AI | Model Info" %}
+{% set active = "models" %}
+
+{% block head %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2>Model Info</h2>
+       
+    </div>
+
+    <div class="layout models-layout">
+      <div class="card">
+        <h3>Charts</h3>
+        <p class="muted">Model comparison and feature importance (demo visuals).</p>
+        <div class="charts">
+          <canvas id="modelChart" height="180"></canvas>
+          <canvas id="fiChart" height="220"></canvas>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="card soft quick-compare">
+          <h3>Quick Comparison</h3>
+          <p class="muted">Use this section to justify model selection during viva.</p>
+          <div class="model-cards" id="modelCards"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+{% endblock %}
+
