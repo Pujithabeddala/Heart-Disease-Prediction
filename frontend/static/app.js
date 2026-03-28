@@ -1,4 +1,6 @@
 (() => {
+  const THEME_KEY = "heartcare-theme";
+
   const MODEL_META = {
     adaboost: {
       name: "RBM",
@@ -34,6 +36,66 @@
 
   function el(id) {
     return document.getElementById(id);
+  }
+
+  function getChartThemeColors() {
+    const root = document.documentElement;
+    const s = getComputedStyle(root);
+    const ink = (s.getPropertyValue("--chart-ink") || "").trim() || "rgba(11,15,26,.82)";
+    const grid = (s.getPropertyValue("--chart-grid") || "").trim() || "rgba(11,15,26,.10)";
+    return { ink, grid };
+  }
+
+  function applyTheme(theme) {
+    const t = theme === "dark" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+    try {
+      localStorage.setItem(THEME_KEY, t);
+    } catch (e) {}
+  }
+
+  function setupThemeToggle() {
+    const btn = el("themeToggle");
+    if (!btn) return;
+
+    const syncLabel = () => {
+      const dark = document.documentElement.getAttribute("data-theme") === "dark";
+      btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+      btn.setAttribute("title", dark ? "Light mode" : "Dark mode");
+    };
+    syncLabel();
+
+    btn.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(next);
+      syncLabel();
+    });
+  }
+
+  function setupMobileNav() {
+    const menuBtn = el("navMenuBtn");
+    const nav = el("primary-nav");
+    if (!menuBtn || !nav) return;
+
+    const setOpen = (open) => {
+      nav.classList.toggle("is-open", open);
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      menuBtn.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+    };
+
+    menuBtn.addEventListener("click", () => {
+      setOpen(!nav.classList.contains("is-open"));
+    });
+
+    nav.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => setOpen(false));
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 769px)").matches) {
+        setOpen(false);
+      }
+    });
   }
 
   function pct(n) {
@@ -108,11 +170,9 @@
 
     const modelCanvas = el("modelChart");
     const fiCanvas = el("fiChart");
-    const ink = "rgba(11,15,26,.82)";
-    const grid = "rgba(11,15,26,.10)";
+    const { ink, grid } = getChartThemeColors();
 
     if (modelCanvas) {
-      // Simple comparison chart (demo values; aligns with model info panel)
       const labels = ["RBM", "FNN", "LSTM"];
       const data = [
         MODEL_META.adaboost.accuracy * 100,
@@ -145,7 +205,6 @@
               color: ink,
               font: { weight: "800" },
             },
-            tooltip: { enabled: true },
           },
           scales: {
             x: { ticks: { color: ink }, grid: { color: grid } },
@@ -161,7 +220,6 @@
     }
 
     if (fiCanvas) {
-      // Feature importance (demo; replace with real importances later if available)
       const labels = ["cp", "thalachh", "oldpeak", "chol", "age", "trtbps", "caa"];
       const data = [0.22, 0.19, 0.16, 0.12, 0.11, 0.10, 0.10];
 
@@ -171,7 +229,6 @@
           labels,
           datasets: [
             {
-              label: "Importance",
               data,
               backgroundColor: [
                 "rgba(56,189,248,.75)",
@@ -182,29 +239,16 @@
                 "rgba(148,163,184,.55)",
                 "rgba(59,130,246,.55)",
               ],
-              borderColor: "rgba(11,15,26,.10)",
-              borderWidth: 1,
             },
           ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "bottom", labels: { color: ink } },
-            title: {
-              display: true,
-              text: "Feature Importance (Demo)",
-              color: ink,
-              font: { weight: "800" },
-            },
-          },
-          cutout: "62%",
         },
       });
     }
   }
 
   function init() {
+    setupThemeToggle();
+    setupMobileNav();
     renderModelCards();
     setupLoading();
     setupCharts();
@@ -213,6 +257,13 @@
     const select = el("modelSelect");
     renderModelInfo(select?.value || "adaboost");
     select?.addEventListener("change", (e) => renderModelInfo(e.target.value));
+
+    // 🔥 PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/static/sw.js')
+        .then(() => console.log('Service Worker Registered'))
+        .catch(err => console.log('SW error:', err));
+    }
   }
 
   if (document.readyState === "loading") {
@@ -221,4 +272,3 @@
     init();
   }
 })();
-

@@ -1,8 +1,6 @@
-flask
+Flask
 numpy
-scikit-learn
 pandas
-xgboost
-catboost
-gdown
+scikit-learn
 gunicorn
+gdown

@@ -152,14 +152,14 @@ import sqlite3
 from datetime import datetime, timezone
 
 # ---------- Flask App ----------
+BASE_DIR = os.path.dirname(__file__)
+
+# ---------- Flask App ----------
 app = Flask(
     __name__,
-    template_folder="../frontend/templates",
-    static_folder="../frontend/static"
+    template_folder=os.path.join(BASE_DIR, "../frontend/templates"),
+    static_folder=os.path.join(BASE_DIR, "../frontend/static")
 )
-
-# ---------- Model Directory ----------
-BASE_DIR = os.path.dirname(__file__)
 MODEL_DIR = "/tmp/model"
 os.makedirs(MODEL_DIR, exist_ok=True)
  
@@ -370,4 +370,6 @@ def contact():
 
 # ---------- Run ----------
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

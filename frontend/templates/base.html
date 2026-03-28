@@ -1,31 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="light">
   <head>
     <title>{{ title or "HeartCare AI" }}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#0f172a">
     {% block head %}{% endblock %}
+    <script>
+      (function () {
+        try {
+          var k = "heartcare-theme";
+          var t = localStorage.getItem(k);
+          if (t === "dark" || t === "light") {
+            document.documentElement.setAttribute("data-theme", t);
+          } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.documentElement.setAttribute("data-theme", "dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <header class="navbar" id="top">
-      <a class="brand" href="{{ url_for('home') }}" aria-label="HeartCare AI home">
-        <span class="brand-icon" aria-hidden="true">🫀</span>
-        <span class="brand-text">HeartCare <span class="brand-accent">AI</span></span>
-      </a>
+      <div class="navbar-row">
+        <a class="brand" href="{{ url_for('home') }}" aria-label="HeartCare AI home">
+          <span class="brand-icon" aria-hidden="true">🫀</span>
+          <span class="brand-text">HeartCare <span class="brand-accent">AI</span></span>
+        </a>
 
-      <nav class="navlinks" aria-label="Primary">
-        <a href="{{ url_for('home') }}" class="{{ 'active' if active == 'home' else '' }}">Home</a>
-        <a href="{{ url_for('predict') }}" class="{{ 'active' if active == 'predict' else '' }}">Predict</a>
-        <a href="{{ url_for('about') }}" class="{{ 'active' if active == 'about' else '' }}">About</a>
-        <a href="{{ url_for('models_page') }}" class="{{ 'active' if active == 'models' else '' }}">Model Info</a>
-        <a href="{{ url_for('history') }}" class="{{ 'active' if active == 'history' else '' }}">History</a>
-        <a href="{{ url_for('contact') }}" class="{{ 'active' if active == 'contact' else '' }}">Contact</a>
-      </nav>
+        <nav class="navlinks" id="primary-nav" aria-label="Primary">
+          <a href="{{ url_for('home') }}" class="{{ 'active' if active == 'home' else '' }}">Home</a>
+          <a href="{{ url_for('predict') }}" class="{{ 'active' if active == 'predict' else '' }}">Predict</a>
+          <a href="{{ url_for('about') }}" class="{{ 'active' if active == 'about' else '' }}">About</a>
+          <a href="{{ url_for('models_page') }}" class="{{ 'active' if active == 'models' else '' }}">Model Info</a>
+          <a href="{{ url_for('history') }}" class="{{ 'active' if active == 'history' else '' }}">History</a>
+          <a href="{{ url_for('contact') }}" class="{{ 'active' if active == 'contact' else '' }}">Contact</a>
+        </nav>
 
-      <a class="nav-user" href="{{ url_for('contact') }}" title="User (optional login)">
-        <span aria-hidden="true">👤</span>
-      </a>
+        <div class="navbar-end">
+          <button type="button" class="nav-menu-btn" id="navMenuBtn" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu">
+            <svg class="nav-menu-icon nav-menu-icon--open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg class="nav-menu-icon nav-menu-icon--close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+
+          <button type="button" class="theme-toggle" id="themeToggle" title="Toggle light / dark theme" aria-label="Toggle color theme">
+            <svg class="theme-icon theme-icon--sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <svg class="theme-icon theme-icon--moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+          </button>
+
+          <a class="nav-user" href="{{ url_for('contact') }}" title="User (optional login)">
+            <span aria-hidden="true">👤</span>
+          </a>
+        </div>
+      </div>
     </header>
 
     <main>
