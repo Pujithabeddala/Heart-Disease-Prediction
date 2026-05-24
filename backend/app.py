@@ -149,6 +149,7 @@ import numpy as np
 import os
 import gdown
 import sqlite3
+from tensorflow.keras.models import load_model as keras_load_model
 from datetime import datetime, timezone
 
 # ---------- Flask App ----------
@@ -217,9 +218,13 @@ init_db()
 
 # ---------- Model File IDs ----------
 files = {
-    "adaboost": ("1jUCzeM-KFNaYjgYl2PkfEV_zD2szjAkE", "adaboost.pkl"),
-    "catboost": ("1L29LWJFPcg3yUHmxj8ixNNpNjgKlF9jC", "catboost.pkl"),
-    "xgboost": ("1toPVI2VjQLSv9HS_ajq9xJIH0ujPOpnz", "xgboost.pkl")
+     
+    # new one 
+    "rbm_rf": ("1AKZRUWDG7MUWVRdbQ_zmC7zxScF45Z26", "rbm_rf_model.pkl"),
+    "xgb_hybrid": ("1B3pxsNWa_wlPw4559PLUQZPZD1AHnlz5", "xgb_model.pkl"),
+    "scaler": ("1nJ8pb8oVOgtMWAkrqwz4_syX_2l9fSSS", "scaler.pkl"),
+    "lstm": ("13XCJvyGqBPJs293WvR5ldfFMAU-4R31x", "lstm_model.h5"),
+    "fnn": ("1mXFRYMPhANTTkGMg5RJ_TuPdGl3b1UZA", "fnn_model.h5")
 }
 
 models = {}
@@ -236,8 +241,12 @@ def load_model(model_name):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, file_path, quiet=False, fuzzy=True)
 
-    with open(file_path, "rb") as f:
-        models[model_name] = pickle.load(f)
+    # 🔥 Handle LSTM separately
+    if filename.endswith(".h5"):
+       models[model_name] = keras_load_model(file_path)
+    else:
+        with open(file_path, "rb") as f:
+            models[model_name] = pickle.load(f)
 
     return models[model_name]
 
@@ -249,11 +258,23 @@ def home():
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
     if request.method == "GET":
-        return render_template("predict.html", pred_class=None)
+        return render_template("predict.html", pred_class=None, selected_model="combined_rbm")
 
-    model_name = request.form.get("model", "adaboost")
-    model = load_model(model_name)   # FIXED
-
+    allowed_hybrids = {
+        "combined_rbm",
+        "combined_xgb",
+        "combined_fnn",
+        "combined_rbm_fnn",
+        "combined_rbm_xgb_soft",
+        "combined_fnn_xgb",
+    }
+    model_name = request.form.get("model", "combined_rbm")
+    if model_name not in allowed_hybrids:
+        model_name = "combined_rbm"
+    rbm_rf_model = load_model("rbm_rf")
+    scaler = load_model("scaler")
+    lstm_model = load_model("lstm")
+    fnn_model = load_model("fnn")
     patient_name = (request.form.get("patient_name") or "").strip() or "Unknown"
 
     # Keep both: array for model + dict for DB/history
@@ -276,8 +297,74 @@ def predict():
 
     input_data = np.array(features).reshape(1, -1)
 
-    pred_class = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1] * 100
+    scaled = scaler.transform(input_data)
+
+# =============================
+# 🔥 LSTM + RBM
+# =============================
+    if model_name == "combined_rbm":
+
+        rbm_prob = rbm_rf_model.predict_proba(scaled)[:, 1]
+        lstm_input = scaled.reshape(1, scaled.shape[1], 1)
+        lstm_prob = lstm_model.predict(lstm_input).flatten()
+        final_prob = (0.3 * rbm_prob) + (0.7 * lstm_prob)
+
+
+# =============================
+# 🔥 LSTM + XGBoost (NEW)
+# =============================
+    elif model_name == "combined_xgb":
+
+        xgb_model = load_model("xgb_hybrid")
+        xgb_prob = xgb_model.predict_proba(scaled)[:, 1]
+        lstm_input = scaled.reshape(1, scaled.shape[1], 1)
+        lstm_prob = lstm_model.predict(lstm_input).flatten()
+        final_prob = (0.6 * xgb_prob) + (0.4 * lstm_prob)
+# =============================
+# 🔥 LSTM + FNN (NEW)
+# =============================
+    elif model_name == "combined_fnn":
+
+        fnn_prob = fnn_model.predict(scaled).flatten()
+        lstm_input = scaled.reshape(1, scaled.shape[1], 1)
+        lstm_prob = lstm_model.predict(lstm_input).flatten()
+        final_prob = (0.6 * fnn_prob) + (0.4 * lstm_prob)
+    # =============================
+# 🔥 RBM + FNN (NEW)
+# =============================
+    elif model_name == "combined_rbm_fnn":
+
+        rbm_prob = rbm_rf_model.predict_proba(scaled)[:, 1]
+        fnn_prob = fnn_model.predict(scaled).flatten()
+        final_prob = (0.2 * rbm_prob) + (0.8 * fnn_prob)
+    # =============================
+# 🔥 RBM + XGBoost (NEW)
+# =============================
+    elif model_name == "combined_rbm_xgb_soft":
+
+        rbm_prob = rbm_rf_model.predict_proba(scaled)[:, 1]
+        xgb_model = load_model("xgb_hybrid") 
+        xgb_prob = xgb_model.predict_proba(scaled)[:, 1]
+        final_prob = (0.8 * xgb_prob) + (0.2 * rbm_prob)
+# =============================
+# 🔥 FNN + XGBoost (NEW)
+# =============================
+    elif model_name == "combined_fnn_xgb":
+
+        fnn_prob = fnn_model.predict(scaled).flatten()
+        xgb_model = load_model("xgb_hybrid")
+        xgb_prob = xgb_model.predict_proba(scaled)[:, 1]
+        final_prob = (0.7 * xgb_prob) + (0.3 * fnn_prob)
+# =============================
+# DEFAULT SAFETY
+# =============================
+    else:
+        final_prob = [0.5]
+
+# Common conversion
+    final_prob = float(final_prob[0])
+    pred_class = int(final_prob > 0.5)
+    probability = float(final_prob * 100)
     confidence = round(probability, 2)
 
     if confidence < 40:

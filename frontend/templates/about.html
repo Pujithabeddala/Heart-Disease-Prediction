@@ -22,18 +22,34 @@
         </div>
 
         <div>
-          <h3>Project models – RBM, FNN, LSTM</h3>
+          <h3>Project models – base learners</h3>
           <p class="muted">
-            <strong>RBM</strong> (Restricted Boltzmann Machine) is used to learn hidden features from the input data
-            in an unsupervised way, which can then support better heart-disease prediction.
+            <strong>RBM + RF stack</strong> (RBM in our naming) learns richer tabular representations, then a random-forest-style head outputs a disease probability from scaled features.
           </p>
           <p class="muted" style="margin-top:10px">
-            <strong>FNN</strong> (Feedforward Neural Network) maps patient features through hidden layers to predict risk
-            from the tabular heart-disease dataset.
+            <strong>FNN</strong> (feedforward neural network) maps the same scaled row through dense layers for a direct neural risk score.
           </p>
           <p class="muted" style="margin-top:10px">
-            <strong>LSTM</strong> (Long Short-Term Memory) can model time-based patterns when sequential or time-series
-            medical data is available for each patient.
+            <strong>LSTM</strong> reshapes the scaled feature vector as a short sequence so a recurrent block can contribute a sequence-style probability alongside the tabular models.
+          </p>
+          <p class="muted" style="margin-top:10px">
+            <strong>XGBoost</strong> supplies a strong gradient-boosted tree probability on the standardized inputs, often paired with LSTM or FNN in hybrids.
+          </p>
+
+          <h3 style="margin-top:22px">Hybrid ensembles (Predict page)</h3>
+          <p class="muted">
+            On the <strong>Predict</strong> screen you choose one of six <strong>hybrids</strong>: two base scores are fused (fixed weights in the app) into a single risk value. Reported validation accuracies on our setup are shown below for transparency and viva discussion.
+          </p>
+          <ul class="muted" style="margin-top:12px;padding-left:20px;line-height:1.65">
+            <li><strong>LSTM + RBM</strong> — about <strong>80%</strong> validation accuracy.</li>
+            <li><strong>LSTM + FNN</strong> — about <strong>78%</strong>.</li>
+            <li><strong>LSTM + XGBoost</strong> — about <strong>88%</strong>.</li>
+            <li><strong>RBM + FNN</strong> — about <strong>77%</strong>.</li>
+            <li><strong>RBM + XGBoost</strong> — about <strong>86%</strong>.</li>
+            <li><strong>FNN + XGBoost</strong> — about <strong>85%</strong>.</li>
+          </ul>
+          <p class="muted" style="margin-top:12px">
+            Hybrids trade interpretability and compute for robustness: tree-heavy pairs (e.g. with XGBoost) often peak in accuracy, while LSTM+RBM balances recurrent and stacked-tabular views. These figures are from our validation protocol; your own splits or hospitals may differ—always validate before any clinical use.
           </p>
         </div>
 

@@ -9,16 +9,19 @@
         <p class="kicker">AI-powered screening assistant</p>
         <h1>AI-Powered Heart Disease Prediction</h1>
         <p class="sub">
-          Predict your heart health in seconds using proven ML models and clear, visual results.
+          Predict your heart health in seconds using proven Hybrid ML models and clear, visual results.
         </p>
         <div class="hero-actions">
           <a class="btn primary" href="{{ url_for('predict') }}">Start Prediction</a>
           <a class="btn ghost" href="{{ url_for('about') }}">Learn more</a>
         </div>
-        <div class="hero-badges">
-          <span class="pill">RBM</span>
-          <span class="pill">FNN</span>
-          <span class="pill">LSTM</span>
+        <div class="hero-badges" aria-label="Available hybrid models">
+          <span class="pill">LSTM + RBM</span>
+          <span class="pill">LSTM + FNN</span>
+          <span class="pill">LSTM + XGBoost</span>
+          <span class="pill">RBM + FNN</span>
+          <span class="pill">RBM + XGBoost</span>
+          <span class="pill">FNN + XGBoost</span>
         </div>
       </div>
 

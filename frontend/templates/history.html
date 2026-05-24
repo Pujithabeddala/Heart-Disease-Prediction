@@ -31,7 +31,14 @@
                     {% if r["model_name"] == "adaboost" %}RBM{% endif %}
                     {% if r["model_name"] == "catboost" %}FNN{% endif %}
                     {% if r["model_name"] == "xgboost" %}LSTM{% endif %}
-                    {% if r["model_name"] not in ["adaboost","catboost","xgboost"] %}{{ r["model_name"] }}{% endif %}
+                    {% if r["model_name"] == "combined" %}LSTM + RBM (combined){% endif %}
+                    {% if r["model_name"] == "combined_rbm" %}LSTM + RBM{% endif %}
+                    {% if r["model_name"] == "combined_fnn" %}LSTM + FNN{% endif %}
+                    {% if r["model_name"] == "combined_xgb" %}LSTM + XGBoost{% endif %}
+                    {% if r["model_name"] == "combined_rbm_fnn" %}RBM + FNN{% endif %}
+                    {% if r["model_name"] == "combined_rbm_xgb_soft" %}RBM + XGBoost{% endif %}
+                    {% if r["model_name"] == "combined_fnn_xgb" %}FNN + XGBoost{% endif %}
+                    {% if r["model_name"] not in ["adaboost","catboost","xgboost","combined","combined_rbm","combined_fnn","combined_xgb","combined_rbm_fnn","combined_rbm_xgb_soft","combined_fnn_xgb"] %}{{ r["model_name"] }}{% endif %}
                   </td>
                   <td>
                     {% if r["pred_class"] == 1 %}

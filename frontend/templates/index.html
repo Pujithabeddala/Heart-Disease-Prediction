@@ -245,6 +245,7 @@
           </div>
 
           <div class="form-footer">
+            <p id="predictFormError" class="predict-form-error" role="alert" hidden></p>
             <label class="field">
               <span class="label">Model</span>
               <span class="control">
@@ -281,6 +282,8 @@
     </div>
 
     {% if prediction_text %}
+    {% set conf_pct = confidence | default(0) | float %}
+    {% set risk_tier = "High" if conf_pct >= 70 else ("Moderate" if conf_pct >= 40 else "Low") %}
     <div class="results" id="results">
       <div class="card result-card">
         <div class="result-top">
@@ -289,8 +292,10 @@
             <p class="muted">Based on the selected model and your inputs.</p>
           </div>
 
-          {% if pred_class == 1 %}
+          {% if risk_tier == "High" %}
             <span class="badge danger">High Risk</span>
+          {% elif risk_tier == "Moderate" %}
+            <span class="badge warning">Moderate Risk</span>
           {% else %}
             <span class="badge success">Low Risk</span>
           {% endif %}
@@ -315,14 +320,14 @@
               <div class="metric-title">Probability</div>
               <div class="metric-value">{{ confidence }}%</div>
               <div class="progress" aria-label="Confidence meter">
-                <div class="progress-bar" style="width: {{ confidence }}%"></div>
+                <div class="progress-bar" data-confidence="{{ confidence }}"></div>
               </div>
               <div class="metric-sub">Confidence meter</div>
             </div>
 
             <div class="metric">
               <div class="metric-title">Risk Level</div>
-              <div class="metric-value">{{ risk }}</div>
+              <div class="metric-value">{{ risk_tier }}</div>
               <div class="metric-sub">Interpretation: Low &lt; 40%, Moderate 40–70%, High &gt;= 70%</div>
             </div>
           </div>
@@ -331,11 +336,11 @@
         <div class="tips">
           <div class="tips-head">Health Tips</div>
           <ul class="tips-list">
-            {% if risk == "High" %}
+            {% if risk_tier == "High" %}
               <li>Consult a cardiologist as soon as possible.</li>
               <li>Avoid smoking and limit alcohol intake.</li>
               <li>Monitor blood pressure and cholesterol regularly.</li>
-            {% elif risk == "Moderate" %}
+            {% elif risk_tier == "Moderate" %}
               <li>Adopt a heart-healthy diet (low salt, low saturated fats).</li>
               <li>Exercise regularly (as advised by a physician).</li>
               <li>Schedule a routine check-up and follow-up tests.</li>
