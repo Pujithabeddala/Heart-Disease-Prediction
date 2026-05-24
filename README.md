@@ -1,62 +1,34 @@
-\# Heart Disease Prediction Web App
+\## 👨‍💻 Project Team
 
 
 
-A Machine Learning based web application that predicts heart disease risk using patient health data.
+This project was developed collaboratively by:
 
 
 
-\## Technologies Used
+\- Abhinaya
 
-\- Python
+\- Nandhu
 
-\- Flask
+\- Pujitha
 
-\- TensorFlow
-
-\- Keras
-
-\- Scikit-learn
-
-\- Pandas
-
-\- NumPy
-
-\- HTML
-
-\- CSS
-
-\- JavaScript
+\- Hrushikesh
 
 
 
-\## Features
-
-\- Predicts heart disease risk
-
-\- User-friendly interface
-
-\- Machine learning integration
-
-\- Flask backend support
+\## 🔹 My Contribution
 
 
 
-\## How to Run
+I worked on the Frontend Development of the project, including:
 
 
 
-```bash
+\- User Interface Design
 
-pip install -r requirements.txt
+\- Frontend Integration
 
-python app.py
+\- Styling and Responsiveness
 
-```
-
-
-
-\## Author
-
-Pujitha
+\- User Experience Improvements
 
